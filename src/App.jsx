@@ -5,7 +5,6 @@ import ReactGA from 'react-ga4';
 
 function App() {
 
-  ReactGA.initialize('G-9F3XEBGWYL');
   ReactGA.send({ hitType: "pageview", page: window.location.pathname + window.location.search, title: "Landing Page" })
 
   return (
@@ -17,8 +16,8 @@ function App() {
           <Typography variant="h6" color="inherit" component="div" sx={{ flexGrow: 1 }}>
             Calculadora Renda Fixa
           </Typography>
-          <Button color="inherit">Comparador LCI/CDB</Button>
-          <Button color="inherit">Simulação</Button>
+          {/* <Button color="inherit">Comparador LCI/CDB</Button>
+          <Button color="inherit">Simulação</Button> */}
         </Toolbar>
       </AppBar>
       <Container style={{ marginTop: 20 }}>
