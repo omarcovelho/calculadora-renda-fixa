@@ -54,8 +54,8 @@ function Calculator() {
         <Grid item xs={12} md={6}>
           <Card style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
             <CardContent style={{ flexGrow: 1 }}>
-              <SliderWithInput label="Taxa CDB (%)" value={cdbRate} onChange={setCdbRate} min={70} max={200} />
-              <SliderWithInput label="Taxa LCI (%)" value={lciRate} onChange={setLciRate} min={70} max={200} />
+              <SliderWithInput label="Taxa CDB (% CDI)" value={cdbRate} onChange={setCdbRate} min={70} max={200} />
+              <SliderWithInput label="Taxa LCI (% CDI)" value={lciRate} onChange={setLciRate} min={70} max={200} />
               <SliderWithInput label="CDI Atual (%)" value={cdiAtual} onChange={setCdiAtual} min={0} max={50} step={0.5} />
             </CardContent>
           </Card>

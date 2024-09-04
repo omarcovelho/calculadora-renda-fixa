@@ -10,7 +10,7 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d dist", 
+    "deploy": "gh-pages -d dist",
     "clean": "rm -rf dist"
   },
   "dependencies": {
@@ -19,7 +19,8 @@
     "@mui/icons-material": "^6.0.2",
     "@mui/material": "^6.0.2",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react-dom": "^18.3.1",
+    "react-ga4": "^2.1.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.9.0",
