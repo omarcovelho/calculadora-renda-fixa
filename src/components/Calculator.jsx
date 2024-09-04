@@ -68,7 +68,7 @@ function Calculator() {
                       <TableCell>Rank</TableCell>
                       <TableCell>Investimento</TableCell>
                       <TableCell>% CDI Real</TableCell>
-                      <TableCell>CDI Real (%)</TableCell>
+                      <TableCell>CDI Real</TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
