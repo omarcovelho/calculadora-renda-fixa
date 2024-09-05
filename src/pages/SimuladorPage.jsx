@@ -62,7 +62,7 @@ const SimuladorPage = () => {
               <SliderWithInput
                 label="Montante Inicial"
                 min={0}
-                max={1000000}
+                max={500000}
                 step={100}
                 value={montanteInicial}
                 onChange={setMontanteInicial}
@@ -72,7 +72,7 @@ const SimuladorPage = () => {
               <SliderWithInput
                 label="Aporte Mensal"
                 min={0}
-                max={1000000}
+                max={50000}
                 step={100}
                 value={aporteMensal}
                 onChange={setAporteMensal}

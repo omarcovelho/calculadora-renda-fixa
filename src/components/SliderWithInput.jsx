@@ -48,7 +48,7 @@ const SliderWithInput = ({ label, min, max, step, value, onChange, icon, format 
           {label}
         </Typography>
       </Grid>
-      <Grid item xs={6}>
+      <Grid item xs={7}>
         <Slider
           value={value}
           onChange={handleSliderChange}
@@ -58,7 +58,7 @@ const SliderWithInput = ({ label, min, max, step, value, onChange, icon, format 
           aria-labelledby="input-slider"
         />
       </Grid>
-      <Grid item xs={6}>
+      <Grid item xs={5}>
         <TextField
           variant="outlined"
           fullWidth
