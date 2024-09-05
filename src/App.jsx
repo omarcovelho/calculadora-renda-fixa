@@ -1,7 +1,8 @@
-import { Container, AppBar, Toolbar, Typography, CssBaseline, Button } from '@mui/material';
+import { Container, AppBar, Toolbar, Typography, CssBaseline, Button, Box } from '@mui/material';
 import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
 import Calculator from './components/Calculator';
 import ReactGA from 'react-ga4';
+import { Chat } from '@mui/icons-material';
 
 function App() {
 
@@ -23,6 +24,13 @@ function App() {
       <Container style={{ marginTop: 20 }}>
         <Calculator />
       </Container>
+
+      <Box sx={{ padding: '10px 0', textAlign: 'center', marginTop: '20px' }}>
+        <Typography variant="body2" color="text.secondary">
+          <Chat sx={{ verticalAlign: 'middle', marginRight: '4px' }} />
+          Powered by ChatGPT
+        </Typography>
+      </Box>
     </Container>
   );
 }
