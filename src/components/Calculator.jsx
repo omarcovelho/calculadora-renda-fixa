@@ -63,14 +63,14 @@ function Calculator() {
   }, [cdbRate, lciRate, cdiAtual]);
 
   return (
-    <Container>
-      <Grid container spacing={2} alignItems="stretch">
+    <>
+    <Grid container spacing={2} alignItems="stretch">
         <Grid item xs={12} md={6}>
           <Card style={{ display: 'flex', flexDirection: 'column', height: '100%', position:  'relative' }}>
             <CardContent style={{ flexGrow: 1 }}>
-              <SliderWithInput label="Taxa CDB (% CDI)" value={cdbRate} onChange={setCdbRate} min={70} max={200} />
-              <SliderWithInput label="Taxa LCI (% CDI)" value={lciRate} onChange={setLciRate} min={70} max={200} />
-              <SliderWithInput label="CDI Atual (%)" value={cdiAtual} onChange={setCdiAtual} min={0} max={50} step={0.5} />
+              <SliderWithInput label="Taxa CDB (% CDI)" value={cdbRate} onChange={setCdbRate} min={70} max={200} icon='%' />
+              <SliderWithInput label="Taxa LCI (% CDI)" value={lciRate} onChange={setLciRate} min={70} max={200} icon='%' />
+              <SliderWithInput label="CDI Atual" value={cdiAtual} onChange={setCdiAtual} min={0} max={50} step={0.5} icon='%' />
               <IconButton
                 onClick={scrollToInfoCard}
                 style={{ position: 'absolute', top: '10px', right: '10px' }}
@@ -132,10 +132,10 @@ function Calculator() {
             Ao inserir as taxas de rendimento de ambos os investimentos na <strong>calculadora de renda fixa</strong>, o usuário pode visualizar de forma clara o impacto da tributação e tomar decisões informadas sobre onde investir.
           </Typography>
         </CardContent>
-      </Card>
+      </Card>   
         </Grid>
       </Grid>
-    </Container>
+    </>
   );
 }
 
