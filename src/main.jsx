@@ -5,6 +5,7 @@ import './index.css'
 import ReactGA from 'react-ga4';
 import { BrowserRouter } from 'react-router-dom';
 
+console.log('init');
 ReactGA.initialize('G-9F3XEBGWYL');
 
 createRoot(document.getElementById('root')).render(

@@ -6,6 +6,8 @@ import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
 import { Link, useLocation } from 'react-router-dom'; // Ensure you have React Router set up
+import GitHubIcon from '@mui/icons-material/GitHub'; // Import GitHub icon from Material-UI
+import { IconButton } from '@mui/material';
 
 // Custom LinkTab component to integrate Tab with React Router's Link
 function LinkTab(props) {
@@ -27,6 +29,14 @@ const Header = () => {
         <Typography variant="h6" component="div" sx={{ flexGrow: 1, textAlign: 'left', pl: 2 }}>
           Calculadora Renda Fixa
         </Typography>
+        <IconButton
+          color="inherit"
+          href="https://github.com/omarcovelho/calculadora-renda-fixa" // Link to the GitHub repository
+          target="_blank" // Open in a new tab
+          rel="noopener noreferrer" // Security best practice
+        >
+          <GitHubIcon />
+        </IconButton>
       </Toolbar>
       {/* Tabs component for navigation, taking the full width below the title */}
       <Box sx={{ width: '100%' }}> {/* Full width for the tabs */}

@@ -1,6 +1,8 @@
 import { Button, Card, CardActions, CardContent, Grid, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import SliderWithInput from '../components/SliderWithInput'
+import { CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import Decimal from 'decimal.js';
 
 const SimuladorPage = () => {
     // State for inputs
@@ -10,33 +12,9 @@ const SimuladorPage = () => {
   const [taxaCDB, setTaxaCDB] = useState(100);
   const [taxaLCI, setTaxaLCI] = useState(93);
   const [cdiAtual, setCdiAtual] = useState(10.5);
-
-  // Função para calcular a alíquota do IR com base no período de investimento
-  const calcularAliquotaIR = (meses) => {
-    if (meses <= 6) return 22.5 / 100; // Até 6 meses
-    if (meses <= 12) return 20 / 100;  // De 6 meses a 1 ano
-    if (meses <= 24) return 17.5 / 100; // De 1 a 2 anos
-    return 15 / 100; // Acima de 2 anos
-  };
-
-  // Função para calcular o montante final
-  const calcularMontanteFinal = (tipo, taxa, montanteInicial, aporteMensal, meses, cdiAtual) => {
-    const taxaEfetivaBruta = ((cdiAtual * taxa) / 10000) / 12; // Taxa efetiva bruta mensal
-    
-    let taxaEfetivaLiquida = taxaEfetivaBruta;
-    
-    // Calculo da taxa líquida para CDB, considerando o IR
-    if (tipo === 'CDB') {
-      const aliquotaIR = calcularAliquotaIR(meses);
-      taxaEfetivaLiquida = taxaEfetivaBruta * (1 - aliquotaIR); // Aplicando a alíquota de IR
-    }
-
-    const montanteFinal =
-      montanteInicial * Math.pow(1 + taxaEfetivaLiquida, meses) +
-      aporteMensal * ((Math.pow(1 + taxaEfetivaLiquida, meses) - 1) / taxaEfetivaLiquida);
-
-    return montanteFinal;
-  };
+  const [data, setData] = useState([]); // Dados para o gráfico
+  const [montanteFinalCDB, setMontanteFinalCDB] = useState(0); // Montante final CDB
+  const [montanteFinalLCI, setMontanteFinalLCI] = useState(0); // Montante final LCI
 
   // Função para formatar o número no formato de moeda brasileira (Real)
   const formatarValor = (valor) => {
@@ -46,17 +24,86 @@ const SimuladorPage = () => {
     }).format(valor);
   };
 
-  // Calcular montante final para CDB e LCI
-  const montanteFinalCDB = calcularMontanteFinal('CDB', taxaCDB, montanteInicial, aporteMensal, meses, cdiAtual);
-  const montanteFinalLCI = calcularMontanteFinal('LCI', taxaLCI, montanteInicial, aporteMensal, meses, cdiAtual);
+  // Função para calcular a alíquota do IR com base no período total de investimento
+  const calcularAliquotaIR = (mesesTotais) => {
+    if (mesesTotais <= 6) return new Decimal(22.5).div(100); // Até 6 meses
+    if (mesesTotais <= 12) return new Decimal(20).div(100);  // De 6 meses a 1 ano
+    if (mesesTotais <= 24) return new Decimal(17.5).div(100); // De 1 a 2 anos
+    return new Decimal(15).div(100); // Acima de 2 anos
+  };
 
+  // Calcula o montante final e gera os dados para o gráfico usando a fórmula de juros compostos com aportes mensais
+  useEffect(() => {
+    const calcularMontanteComJurosCompostos = (meses, montanteInicial, aporteMensal, taxaMensal) => {
+      const montanteInicialDecimal = new Decimal(montanteInicial); // Montante inicial como Decimal
+      const aporteMensalDecimal = new Decimal(aporteMensal); // Aporte mensal como Decimal
+      const taxaMensalDecimal = new Decimal(taxaMensal); // Taxa mensal como Decimal
+
+      const resultados = [];
+
+      for (let i = 0; i <= meses; i++) {
+        // Fórmula corrigida de juros compostos com aportes mensais
+        const montante = montanteInicialDecimal
+          .mul(Decimal.pow(taxaMensalDecimal.plus(1), i)) // P * (1 + i)^n
+          .plus(
+            aporteMensalDecimal
+              .mul(Decimal.pow(taxaMensalDecimal.plus(1), i).minus(1))
+              .div(taxaMensalDecimal)
+          ); // A * [(1 + i)^n - 1] / i
+
+        // Converte o montante de volta para o valor original para o gráfico
+        resultados.push({ mes: i, valor: montante.toNumber() });
+      }
+
+      return resultados;
+    };
+
+    // Calcula a taxa de rendimento anual para CDB e LCI usando Decimal.js
+    const taxaAnualCDB = new Decimal(taxaCDB).div(100).mul(new Decimal(cdiAtual).div(100)); // Taxa anual do CDB
+    const taxaAnualLCI = new Decimal(taxaLCI).div(100).mul(new Decimal(cdiAtual).div(100)); // Taxa anual do LCI
+
+    // Calcula a taxa de rendimento anual efetiva para o CDB ajustada pelo IR
+    const aliquotaIR = calcularAliquotaIR(meses);
+    const taxaAnualEfetivaCDB = taxaAnualCDB.mul(new Decimal(1).minus(aliquotaIR)); // Taxa anual efetiva após IR
+
+    // Calcula a taxa de rendimento mensal efetiva para CDB e LCI
+    const taxaMensalEfetivaCDB = Decimal.pow(taxaAnualEfetivaCDB.plus(1), new Decimal(1).div(12)).minus(1);
+    const taxaMensalLCI = Decimal.pow(taxaAnualLCI.plus(1), new Decimal(1).div(12)).minus(1); // Sem IR
+
+    // Calcula o montante para CDB considerando IR e LCI sem IR
+    const cdbData = calcularMontanteComJurosCompostos(
+      meses,
+      montanteInicial,
+      aporteMensal,
+      taxaMensalEfetivaCDB
+    );
+    const lciData = calcularMontanteComJurosCompostos(
+      meses,
+      montanteInicial,
+      aporteMensal,
+      taxaMensalLCI
+    );
+
+    // Combina os dados para o gráfico
+    const combinedData = cdbData.map((item, index) => ({
+      mes: item.mes,
+      CDB: item.valor,
+      LCI: lciData[index].valor,
+    }));
+
+    setData(combinedData);
+
+    // Calcula o montante final para CDB e LCI
+    setMontanteFinalCDB(cdbData[cdbData.length - 1].valor);
+    setMontanteFinalLCI(lciData[lciData.length - 1].valor);
+  }, [meses, montanteInicial, aporteMensal, taxaCDB, taxaLCI, cdiAtual]);
 
   return (
     <>
         <Grid container spacing={4}>
         {/* First Card */}
         <Grid item xs={12} md={6}>
-          <Card>
+          <Card sx={{ height: '100%' }}>
             <CardContent>
               {/* Input fields with SliderWithInput */}
               <SliderWithInput
@@ -141,6 +188,24 @@ const SimuladorPage = () => {
               </TableContainer>
             </CardContent>
           </Card>
+          <Card sx={{ marginTop: 4 }}>
+            <CardContent>
+            <ResponsiveContainer width="100%" height={400}>
+                <LineChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 40 }}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis 
+          dataKey="mes" 
+          label={{ value: 'Meses', position: 'insideBottom', offset: -20 }} // Adjusted position and offset
+        />
+                <YAxis label={{ value: 'Valor', angle: -90, position: 'insideLeft' }} />
+                <Tooltip />
+                <Legend verticalAlign="top" height={36} /> 
+                <Line type="monotone" dataKey="CDB" stroke="#8884d8" name="Investimento CDB" />
+                <Line type="monotone" dataKey="LCI" stroke="#82ca9d" name="Investimento LCI" />
+                </LineChart>
+            </ResponsiveContainer>
+            </CardContent>
+        </Card>
         </Grid>
       </Grid>
     </>
